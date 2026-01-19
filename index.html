@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ficha - Operação Renascer</title>
+    <style>
+        :root {
+            /* Fundo Paranormal */
+            --bg-dark: #050000;
+            --blood-deep: #4a0000;
+            --blood-bright: #b30000;
+            
+            /* Interface Clínica */
+            --panel: #141820;           /* Cinza azulado clínico */
+            --panel-soft: #1b2030;      /* Campos internos */
+            --border: #2a3142;          /* Linhas frias */
+            --accent-blue: #3e9ece;     /* Azul técnico */
+            --text: #e6e8ec;
+            --muted: #8b93a7;
+            
+            --radius-lg: 18px;
+            --radius-md: 10px;
+        }
+
+        * { box-sizing: border-box; transition: background 0.3s, border-color 0.3s; }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Fundo Animado Paranormal */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle at center, var(--blood-deep) 0%, var(--bg-dark) 70%);
+            z-index: -1;
+            animation: moveBg 15s infinite alternate ease-in-out;
+            opacity: 0.6;
+        }
+
+        @keyframes moveBg {
+            0% { transform: translate(-25%, -25%) scale(1); }
+            100% { transform: translate(0%, 0%) scale(1.2); }
+        }
+
+        /* Animações Dinâmicas */
+        @keyframes cardPop {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .sheet.clearing { animation: apagarFicha 0.6s ease forwards; }
+        @keyframes apagarFicha {
+            0% { opacity: 1; filter: blur(0); transform: scale(1); }
+            100% { opacity: 0; filter: blur(10px); transform: scale(0.95); }
+        }
+
+        h1 {
+            text-align: center;
+            margin: 30px 0;
+            color: var(--text);
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            font-weight: 300;
+            text-shadow: 0 0 15px rgba(255,255,255,0.1);
+        }
+
+        .header-actions {
+            max-width: 1100px;
+            margin: 0 auto 20px;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            padding: 0 20px;
+            flex-wrap: wrap;
+        }
+
+        .sheet {
+            max-width: 1100px;
+            margin: 0 auto 40px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 0 20px;
+        }
+
+        .section {
+            background: var(--panel);
+            padding: 22px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(8px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .full { grid-column: 1 / -1; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+
+        h2 {
+            margin: 0 0 15px;
+            font-size: 13px;
+            color: var(--accent-blue);
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        label {
+            display: block;
+            font-size: 11px;
+            color: var(--muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 12px;
+            background: var(--panel-soft);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            color: #fff;
+            font-size: 15px;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 10px rgba(62, 158, 206, 0.3);
+        }
+
+        input[readonly] {
+            background: rgba(0, 0, 0, 0.2);
+            border-style: dashed;
+            color: var(--muted);
+            cursor: not-allowed;
+        }
+
+        button {
+            background: var(--panel-soft);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 10px 20px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 11px;
+        }
+
+        button:hover {
+            border-color: var(--accent-blue);
+            background: #252d44;
+            transform: translateY(-2px);
+        }
+
+        /* Status de Vida/Sanidade */
+        .ok { border-color: var(--border); }
+        .warn { border-color: #8a6d3b; }
+        .crit { border-color: #a94442; animation: pulseRed 2s infinite; }
+        .dead { border-color: #000; background: #000 !important; color: #444 !important; opacity: 0.8; }
+
+        @keyframes pulseRed {
+            0%, 100% { box-shadow: 0 0 5px #a94442; }
+            50% { box-shadow: 0 0 20px #a94442; }
+        }
+
+        /* GRIDS DINÂMICAS (RITUAIS E ITENS) */
+        .rituais-grid, .inventario-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Ajustado para telas pequenas */
+            gap: 15px;
+        }
+
+        .ritual-card, .item-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 18px;
+            position: relative;
+            animation: cardPop 0.3s ease-out;
+        }
+
+        .item-card.card-arma { border-left: 3px solid var(--accent-blue); }
+
+        /* Botão X Minimalista */
+        .btn-remover {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            background: none;
+            border: none;
+            color: var(--muted);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+            transition: 0.2s;
+        }
+
+        .btn-remover:hover {
+            color: #ff4d4d;
+            transform: scale(1.3);
+            text-shadow: 0 0 10px #ff4d4d;
+        }
+
+        .ritual-card textarea, .item-card textarea {
+            min-height: 100px;
+            height: 100px;
+            font-size: 14px;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 25px; right: 25px;
+            background: var(--panel);
+            color: white;
+            padding: 18px 30px;
+            border: 1px solid var(--accent-blue);
+            border-radius: var(--radius-md);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: 0.4s;
+            z-index: 9999;
+            pointer-events: none;
+            max-width: 350px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+        }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.confirm { pointer-events: auto; }
+        .toast-actions { display: none; gap: 10px; margin-top: 10px; justify-content: flex-end; }
+        .toast.confirm .toast-actions { display: flex; }
+
+        /* Animação de Dissipação */
+        @keyframes cardVanish {
+            0% { opacity: 1; transform: scale(1); filter: blur(0); }
+            40% { border-color: #ff4d4d; box-shadow: 0 0 20px #ff4d4d; transform: scale(1.02); }
+            100% { opacity: 0; transform: scale(0.7); filter: blur(15px); }
+        }
+
+        /* Classe que ativa a animação */
+        .removing {
+            animation: cardVanish 0.4s ease-out forwards !important;
+            pointer-events: none;
+        }
+
+        /* ============================================================
+           SISTEMA DE RESPONSIVIDADE (MEDIA QUERIES)
+           ============================================================ */
+
+        /* Tablets e Telas Médias */
+        @media (max-width: 900px) {
+            .sheet {
+                grid-template-columns: 1fr; /* Coluna única na ficha principal */
+                gap: 15px;
+            }
+            h1 { font-size: 1.8rem; }
+        }
+
+        /* Celulares */
+        @media (max-width: 600px) {
+            h1 { font-size: 1.4rem; margin: 20px 0; letter-spacing: 2px; }
+            
+            .header-actions {
+                padding: 0 10px;
+                gap: 8px;
+            }
+
+            .header-actions button {
+                flex: 1 1 40%; /* Botões dividem a linha em 2 */
+                padding: 8px 5px;
+                font-size: 9px;
+            }
+
+            .section {
+                padding: 15px;
+                border-radius: 12px;
+            }
+
+            /* Transformar grids de atributos e status em colunas mais legíveis */
+            .grid-3 {
+                grid-template-columns: 1fr 1fr; /* Status vitais em 2 colunas para não esmagar */
+            }
+
+            .grid-2 {
+                grid-template-columns: 1fr; /* Perícias e afins em 1 coluna */
+            }
+
+            .toast {
+                left: 10px;
+                right: 10px;
+                bottom: 10px;
+                max-width: none;
+                padding: 15px;
+                font-size: 13px;
+            }
+        }
+
+        /* Ajuste específico para o monitoramento vital em telas muito pequenas */
+        @media (max-width: 400px) {
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ================= STATUS EM BARRAS ================= */
+
+.status-block {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.status-bar {
+    width: 100%;
+    height: 14px;
+    background: #111;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+
+.status-bar .fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent-blue), #6fbbe8);
+    transition: width 0.3s ease;
+}
+
+.status-bar.contam .fill {
+    background: linear-gradient(90deg, #4f5d23, #9dbb3d);
+}
+
+.status-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+}
+
+.status-controls button {
+    padding: 4px 10px;
+    font-size: 14px;
+}
+
+/* ================= AVISOS PROGRESSIVOS – URGÊNCIA REAL ================= */
+
+.status-bar {
+    position: relative;
+    transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* 70% — Alerta */
+.status-bar.warn {
+    border: 2px solid #f5c542;
+    box-shadow: 0 0 10px rgba(245, 197, 66, 0.6);
+}
+
+/* 50% — Perigo */
+.status-bar.danger {
+    border: 2px solid #ff8c00;
+    box-shadow: 0 0 16px rgba(255, 140, 0, 0.9);
+}
+
+/* 30% — Crítico */
+.status-bar.critical {
+    border: 2px solid #ff2e2e;
+    box-shadow: 0 0 25px rgba(255, 46, 46, 1);
+}
+
+/* Overlay pulsante (Crítico) */
+.status-bar.critical::after {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: inherit;
+    background: rgba(255, 46, 46, 0.15);
+    animation: criticalPulse 1.2s infinite;
+    pointer-events: none;
+}
+
+/* 10% — Colapso */
+.status-bar.collapse {
+    border: 3px solid #ff0000;
+    box-shadow: 0 0 35px rgba(255, 0, 0, 1);
+    animation: collapseShake 0.25s infinite;
+}
+
+/* Flash agressivo */
+.status-bar.collapse::after {
+    content: "";
+    position: absolute;
+    inset: -6px;
+    border-radius: inherit;
+    background: rgba(255, 0, 0, 0.25);
+    animation: collapseFlash 0.6s infinite;
+    pointer-events: none;
+}
+
+@keyframes criticalPulse {
+    0% { opacity: 0.4; }
+    50% { opacity: 0.75; }
+    100% { opacity: 0.4; }
+}
+
+@keyframes collapseShake {
+    0% { transform: translate(0, 0); }
+    25% { transform: translate(-1.5px, 0); }
+    50% { transform: translate(1.5px, 0); }
+    75% { transform: translate(0, -1.5px); }
+    100% { transform: translate(0, 0); }
+}
+
+@keyframes collapseFlash {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.85; }
+}
+    </style>
+</head>
+
+<body>
+
+    <h1>Operação Renascer</h1>
+
+    <div class="header-actions">
+        <button onclick="salvarFicha()">💾 Salvar</button>
+        <button onclick="carregarFicha()">📂 Carregar</button>
+        <button onclick="exportarFicha()">⬇️ Exportar</button>
+        <input type="file" id="importFile" hidden onchange="importarFicha(event)">
+        <button onclick="document.getElementById('importFile').click()">⬆️ Importar</button>
+        <button onclick="limparFicha()">🗑️ Limpar</button>
+    </div>
+
+    <div class="sheet" id="sheet">
+        <!-- Identidade -->
+        <div class="section full">
+            <h2>Identidade do Agente</h2>
+            <div class="grid-3">
+                <div><label>Nome</label><input id="nome" type="text"></div>
+                <div><label>Profissão</label><input id="profissao" type="text"></div>
+                <div><label>Idade</label><input id="idade" type="number" value="0"></div>
+            </div>
+        </div>
+
+        <!-- Atributos -->
+        <div class="section">
+            <h2>Atributos Base</h2>
+            <div class="grid-1">
+                <label>Força</label><input id="forca" type="number" value="0">
+                <label>Agilidade</label><input id="agilidade" type="number" value="0">
+                <label>Intelecto</label><input id="intelecto" type="number" value="0">
+                <label>Percepção</label><input id="percepcao" type="number" value="0">
+                <label>Vontade</label><input id="vontade" type="number" value="0">
+            </div>
+        </div>
+
+        <!-- Perícias -->
+        <div class="section">
+            <h2>Perícias Treinadas</h2>
+            <div class="grid-2">
+                <div><label>Atletismo</label><input id="per_atletismo" type="number" value="0"></div>
+                <div><label>Furtividade</label><input id="per_furtividade" type="number" value="0"></div>
+                <div><label>Manipulação</label><input id="per_manipulacao" type="number" value="0"></div>
+                <div><label>Intimidação</label><input id="per_intimidacao" type="number" value="0"></div>
+                <div><label>Luta</label><input id="per_luta" type="number" value="0"></div>
+                <div><label>Mira</label><input id="per_mira" type="number" value="0"></div>
+                <div><label>Pilotagem</label><input id="per_pilotagem" type="number" value="0"></div>
+                <div><label>Investigação</label><input id="per_investigacao" type="number" value="0"></div>
+                <div><label>Tecnologia</label><input id="per_tecnologia" type="number" value="0"></div>
+                <div><label>Medicina</label><input id="per_medicina" type="number" value="0"></div>
+                <div><label>Ocultismo</label><input id="per_ocultismo" type="number" value="0"></div>
+                <div><label>Reflexo</label><input id="per_reflexo" type="number" value="0"></div>
+            </div>
+        </div>
+
+<!-- Status Vitais -->
+<div class="section full">
+    <h2>Monitoramento Vital</h2>
+
+    <div class="grid-2">
+
+        <!-- VIDA -->
+        <div class="status-block">
+            <label>Vida</label>
+            <div class="status-bar">
+                <div id="vidaBar" class="fill"></div>
+            </div>
+            <div class="status-controls">
+                <button onclick="alterarStatus('vidaAtual', -1)">−</button>
+                <span id="vidaTexto">0 / 0</span>
+                <button onclick="alterarStatus('vidaAtual', 1)">+</button>
+            </div>
+            <input id="vidaAtual" type="hidden" value="0">
+            <input id="vidaMax" type="hidden">
+        </div>
+
+        <!-- SANIDADE -->
+        <div class="status-block">
+            <label>Sanidade</label>
+            <div class="status-bar">
+                <div id="sanidadeBar" class="fill"></div>
+            </div>
+            <div class="status-controls">
+                <button onclick="alterarStatus('sanidadeAtual', -1)">−</button>
+                <span id="sanidadeTexto">0 / 0</span>
+                <button onclick="alterarStatus('sanidadeAtual', 1)">+</button>
+            </div>
+            <input id="sanidadeAtual" type="hidden" value="0">
+            <input id="sanidadeMax" type="hidden">
+        </div>
+
+        <!-- ÂNIMO -->
+        <div class="status-block">
+            <label>Ânimo</label>
+            <div class="status-bar">
+                <div id="animoBar" class="fill"></div>
+            </div>
+            <div class="status-controls">
+                <button onclick="alterarStatus('animoAtual', -1)">−</button>
+                <span id="animoTexto">0 / 0</span>
+                <button onclick="alterarStatus('animoAtual', 1)">+</button>
+            </div>
+            <input id="animoAtual" type="hidden" value="0">
+            <input id="animoMax" type="hidden">
+        </div>
+
+        <!-- CONTAMINAÇÃO -->
+        <div class="status-block">
+            <label>Contaminação</label>
+            <div class="status-bar contam">
+                <div id="contBar" class="fill"></div>
+            </div>
+            <div class="status-controls">
+                <button onclick="alterarStatus('contAtual', -1)">−</button>
+                <span id="contTexto">0 / 0</span>
+                <button onclick="alterarStatus('contAtual', 1)">+</button>
+            </div>
+            <input id="contAtual" type="hidden" value="0">
+            <input id="contMax" type="hidden">
+        </div>
+
+        <!-- DEFESA -->
+        <div>
+            <label>Defesa</label>
+            <input id="defesa" type="number" readonly>
+        </div>
+
+    </div>
+</div>
+
+
+        <!-- Inventário -->
+        <div class="section full">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                <h2 style="margin-bottom: 0;">Equipamentos e Itens</h2>
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="adicionarItem('comum')">+ Item</button>
+                    <button onclick="adicionarItem('arma')">+ Arma</button>
+                </div>
+            </div>
+            <div id="inventarioContainer" class="inventario-grid"></div>
+        </div>
+
+        <!-- Rituais -->
+        <div class="section full">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h2 style="margin-bottom: 0;">Rituais & Poderes</h2>
+                <button onclick="adicionarRitual()">+ Novo Ritual</button>
+            </div>
+            <div id="rituaisContainer" class="rituais-grid"></div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast">
+        <div id="toastMessage"></div>
+        <div id="toastActions" class="toast-actions"></div>
+    </div>
+
+    <script>
+        const el = id => document.getElementById(id);
+
+        function alterarStatus(id, delta) {
+    const atual = el(id);
+    const max = el(id.replace('Atual', 'Max'));
+
+    let val = (+atual.value || 0) + delta;
+    val = Math.max(0, Math.min(val, +max.value || 0));
+
+    atual.value = val;
+    atualizarBarra(id);
+    salvarFicha();
+}
+
+function atualizarBarra(id) {
+    const atual = +el(id).value || 0;
+    const max = +el(id.replace('Atual', 'Max')).value || 0;
+    const pct = max > 0 ? (atual / max) * 100 : 0;
+
+    const map = {
+        vidaAtual: ['vidaBar', 'vidaTexto'],
+        sanidadeAtual: ['sanidadeBar', 'sanidadeTexto'],
+        animoAtual: ['animoBar', 'animoTexto'],
+        contAtual: ['contBar', 'contTexto']
+    };
+
+    const [barId, textId] = map[id];
+    const bar = el(barId).parentElement;
+
+    // Limpa estados
+    bar.classList.remove('warn', 'danger', 'critical', 'collapse');
+
+    // Lógica invertida para contaminação
+    const efetivoPct = id === 'contAtual' ? 100 - pct : pct;
+
+    if (efetivoPct <= 10) {
+        bar.classList.add('collapse');
+    } else if (efetivoPct <= 30) {
+        bar.classList.add('critical');
+    } else if (efetivoPct <= 50) {
+        bar.classList.add('danger');
+    } else if (efetivoPct <= 70) {
+        bar.classList.add('warn');
+    }
+
+    el(barId).style.width = `${pct}%`;
+    el(textId).textContent = `${atual} / ${max}`;
+}
+
+        const ATR_MAX = 5;
+        let toastTimer;
+
+        /* --- SISTEMA DE TOAST --- */
+        function resetToast() {
+            clearTimeout(toastTimer);
+            el('toast').classList.remove('show', 'confirm');
+        }
+
+        function showToast(msg, time = 3000) {
+            resetToast();
+            el('toastMessage').textContent = msg;
+            el('toast').classList.add('show');
+            toastTimer = setTimeout(() => el('toast').classList.remove('show'), time);
+        }
+
+        function showConfirmToast(msg, onConfirm) {
+            resetToast();
+            el('toastMessage').textContent = msg;
+            el('toast').classList.add('show', 'confirm');
+            el('toastActions').innerHTML = `
+                <button onclick="resetToast()">Cancelar</button>
+                <button style="color:#ff4d4d; border-color:#ff4d4d" id="btnConfirm">Confirmar</button>
+            `;
+            el('btnConfirm').onclick = onConfirm;
+        }
+
+        /* --- RITUAIS DINÂMICOS --- */
+        function adicionarRitual(dados = null) {
+            const container = el('rituaisContainer');
+            const id = Date.now() + Math.random();
+            const card = document.createElement('div');
+            card.className = 'ritual-card';
+            card.dataset.id = id;
+            card.innerHTML = `
+            <button class="btn-remover" title="Apagar Ritual" onclick="removerCard(this)">✕</button>
+                <div class="grid-2">
+                    <div><label>Nome</label><input type="text" class="rit-nome" value="${dados?.nome || ''}"></div>
+                    <div><label>Gasto</label><input type="text" class="rit-gasto" value="${dados?.gasto || ''}"></div>
+                </div>
+                <label>Efeito</label><textarea class="rit-detalhes">${dados?.detalhes || ''}</textarea>
+                <label>Riscos</label><textarea class="rit-riscos" style="height:60px">${dados?.riscos || ''}</textarea>    
+            `;
+            container.appendChild(card);
+            card.querySelectorAll('input, textarea').forEach(i => i.addEventListener('input', salvarFicha));
+        }
+
+        /* --- INVENTÁRIO DINÂMICO --- */
+        function adicionarItem(tipo, dados = null) {
+            const container = el('inventarioContainer');
+            const id = Date.now() + Math.random();
+            const card = document.createElement('div');
+            card.className = `item-card ${tipo === 'arma' ? 'card-arma' : ''}`;
+            card.dataset.id = id;
+            card.dataset.tipo = tipo;
+
+            if (tipo === 'arma') {
+                card.innerHTML = `
+                    <button class="btn-remover" title="Apagar Arma" onclick="removerCard(this)">✕</button>
+                    <div class="grid-2">
+                        <div><label>Arma</label><input type="text" class="item-nome" value="${dados?.nome || ''}"></div>
+                        <div><label>Munição</label><input id="municao" type="text" class="item-municao" value="${dados?.municao || ''}"></div>
+                    </div>
+                    <div class="grid-2">
+                        <div><label>Dano</label><input type="text" class="item-dano" value="${dados?.dano || ''}"></div>
+                        <div><label>Alcance</label><input type="text" class="item-alcance" value="${dados?.alcance || ''}"></div>
+                    </div>
+                    <label>Descrição</label><textarea class="item-desc" style="height:60px">${dados?.desc || ''}</textarea>
+                `;
+            } else {
+                card.innerHTML = `
+                    <button class="btn-remover" title="Apagar Item" onclick="removerCard(this)">✕</button>
+                    <label>Item</label><input type="text" class="item-nome" value="${dados?.nome || ''}">
+                    <label>Descrição</label><textarea class="item-desc">${dados?.desc || ''}</textarea>
+                    <label>Uso</label><input type="text" class="item-uso" value="${dados?.uso || ''}">
+                `;
+            }
+            container.appendChild(card);
+            card.querySelectorAll('input, textarea').forEach(i => i.addEventListener('input', salvarFicha));
+        }
+
+function removerCard(btn) {
+    const card = btn.parentElement;
+    
+    // 1. Adiciona a classe de animação
+    card.classList.add('removing');
+    
+    // 2. Espera 400ms (tempo da animação) para remover do HTML
+    setTimeout(() => {
+        card.remove();
+        salvarFicha(); // Salva a ficha após a remoção
+    }, 400);
+}
+        /* --- CÁLCULOS E CLAMPS --- */
+        function calcMax() {
+            const f = clampInput('forca', ATR_MAX, 'Força');
+            const a = clampInput('agilidade', ATR_MAX, 'Agilidade');
+            const i = clampInput('intelecto', ATR_MAX, 'Intelecto');
+            const p = clampInput('percepcao', ATR_MAX, 'Percepção');
+            const v = clampInput('vontade', ATR_MAX, 'Vontade');
+
+            const vidaM = 20 + (f * 3) + v;
+            const sanM  = 20 + (i * 3) + v;
+            const aniM  = (v * 2) + sanM;
+            const defM  = (f + v) * 3;
+            const contM = v * 5;
+
+            el('vidaMax').value = vidaM;
+            el('sanidadeMax').value = sanM;
+            el('animoMax').value = aniM;
+            el('defesa').value = defM;
+            el('contMax').value = contM;
+
+            clampDerivado('vidaAtual', vidaM, 'Vida');
+            clampDerivado('sanidadeAtual', sanM, 'Sanidade');
+            clampDerivado('animoAtual', aniM, 'Ânimo');
+            clampDerivado('contAtual', contM, 'Contaminação');
+            ['vidaAtual', 'sanidadeAtual', 'animoAtual', 'contAtual']
+            .forEach(atualizarBarra);
+
+            updateVisuals();
+        }
+
+        function clampInput(id, max, nome) {
+            let val = +el(id).value || 0;
+            if (val > max) { el(id).value = max; showToast(`${nome} max: ${max}`); return max; }
+            if (val < 0) { el(id).value = 0; return 0; }
+            return val;
+        }
+
+        function clampDerivado(id, max, nome) {
+            let val = +el(id).value || 0;
+            if (val > max) { el(id).value = max; showToast(`${nome} ultrapassou o máximo!`); }
+        }
+
+        function updateVisuals() {
+            ['vidaAtual', 'sanidadeAtual', 'animoAtual'].forEach(id => {
+                const val = +el(id).value;
+                const max = +el(id.replace('Atual', 'Max')).value;
+                const input = el(id);
+                input.classList.remove('ok', 'warn', 'crit', 'dead');
+                const pct = (val / max) * 100;
+                if (pct <= 0) input.classList.add('dead');
+                else if (pct < 40) input.classList.add('crit');
+                else if (pct < 70) input.classList.add('warn');
+                else input.classList.add('ok');
+            });
+        }
+
+        /* --- SALVAMENTO COMPLETO (JSON) --- */
+        function getTudoData() {
+            const data = { rituais: [], itens: [] };
+            document.querySelectorAll('input:not([type="file"]), textarea').forEach(i => {
+                if (i.id && !i.className.includes('rit-') && !i.className.includes('item-')) {
+                    data[i.id] = i.value;
+                }
+            });
+            document.querySelectorAll('.ritual-card').forEach(c => {
+                data.rituais.push({
+                    nome: c.querySelector('.rit-nome').value,
+                    gasto: c.querySelector('.rit-gasto').value,
+                    detalhes: c.querySelector('.rit-detalhes').value,
+                    riscos: c.querySelector('.rit-riscos').value
+                });
+            });
+            document.querySelectorAll('.item-card').forEach(c => {
+                const item = { tipo: c.dataset.tipo, nome: c.querySelector('.item-nome').value, desc: c.querySelector('.item-desc').value };
+                if (item.tipo === 'arma') {
+                    item.municao = c.querySelector('.item-municao').value;
+                    item.dano = c.querySelector('.item-dano').value;
+                    item.alcance = c.querySelector('.item-alcance').value;
+                } else { item.uso = c.querySelector('.item-uso').value; }
+                data.itens.push(item);
+            });
+            return data;
+        }
+
+        function salvarFicha() { localStorage.setItem('fichaOR', JSON.stringify(getTudoData())); }
+
+        function carregarFicha(dadosExternos = null) {
+            const raw = dadosExternos || JSON.parse(localStorage.getItem('fichaOR'));
+            if (!raw) return;
+            el('rituaisContainer').innerHTML = '';
+            el('inventarioContainer').innerHTML = '';
+            Object.entries(raw).forEach(([id, val]) => { if (el(id) && id !== 'rituais' && id !== 'itens') el(id).value = val; });
+            if (raw.rituais) raw.rituais.forEach(r => adicionarRitual(r));
+            if (raw.itens) raw.itens.forEach(i => adicionarItem(i.tipo, i));
+            calcMax();
+        }
+
+        window.exportarFicha = () => {
+            const blob = new Blob([JSON.stringify(getTudoData(), null, 2)], { type: 'application/json' });
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+            a.download = `ficha_${el('nome').value || 'agente'}.json`; a.click();
+        };
+
+        window.importarFicha = (e) => {
+            const reader = new FileReader();
+            reader.onload = ev => {
+                try {
+                    const data = JSON.parse(ev.target.result);
+                    carregarFicha(data); salvarFicha(); showToast('Ficha importada!');
+                } catch { showToast('Erro no arquivo.'); }
+            };
+            reader.readAsText(file);
+        };
+
+        window.limparFicha = () => {
+            showConfirmToast('Deseja apagar todos os dados do sistema?', () => {
+                el('sheet').classList.add('clearing');
+                setTimeout(() => { localStorage.removeItem('fichaOR'); location.reload(); }, 600);
+            });
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            carregarFicha();
+            document.querySelectorAll('input').forEach(i => i.addEventListener('input', () => { calcMax(); salvarFicha(); }));
+            document.querySelectorAll('textarea').forEach(t => t.addEventListener('input', salvarFicha));
+        });
+    </script>
+</body>
+</html>
