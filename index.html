@@ -837,15 +837,26 @@ function removerCard(btn) {
         };
 
         window.importarFicha = (e) => {
-            const reader = new FileReader();
-            reader.onload = ev => {
-                try {
-                    const data = JSON.parse(ev.target.result);
-                    carregarFicha(data); salvarFicha(); showToast('Ficha importada!');
-                } catch { showToast('Erro no arquivo.'); }
-            };
-            reader.readAsText(file);
-        };
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = (ev) => {
+        try {
+            const data = JSON.parse(ev.target.result);
+            carregarFicha(data);
+            salvarFicha();
+            showToast('Ficha importada com sucesso!');
+        } catch (err) {
+            console.error(err);
+            showToast('Arquivo inválido ou corrompido.');
+        }
+    };
+
+    reader.readAsText(file);
+};
+
 
         window.limparFicha = () => {
             showConfirmToast('Deseja apagar todos os dados do sistema?', () => {
