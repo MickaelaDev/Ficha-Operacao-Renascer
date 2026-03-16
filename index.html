@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ficha - Operação Renascer</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23030000'/><circle cx='50' cy='50' r='28' fill='%23b30000'/></svg>">
     <style>
         :root {
             /* Fundo Paranormal */
@@ -24,42 +25,82 @@
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
+        html, body { width: 100%; min-height: 100%; margin: 0; padding: 0; }
         body {
             margin: 0;
             font-family: 'Segoe UI', Roboto, sans-serif;
-            background-color: var(--bg-dark);
             color: var(--text);
             overflow-x: hidden;
+            width: 100%;
             min-height: 100vh;
-            transition: background-color 0.35s ease;
+            background: #070000;
+            position: relative;
             user-select: none;
         }
 
         body, .sheet, .section, h1, h2, label, .header-actions, .status-controls, .toast, .grid-1, .grid-2, .grid-3 { user-select: none; }
-
         input, textarea { user-select: text; }
         button { user-select: none; }
-
         input, textarea, button, .status-controls button, .btn-remover, .section {
             transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
         }
 
-        /* Fundo Animado Paranormal */
-        body::before {
+        /* Fundo em névoa vermelha */
+        body::before,
+        body::after {
             content: "";
             position: fixed;
-            top: 0; left: 0;
-            width: 200%; height: 200%;
-            background: radial-gradient(circle at center, var(--blood-deep) 0%, var(--bg-dark) 70%);
-            z-index: -1;
-            animation: moveBg 15s infinite alternate ease-in-out;
-            opacity: 0.6;
+            inset: 0;
+            z-index: -2;
+            pointer-events: none;
+            width: 100%;
+            height: 100%;
         }
 
-        @keyframes moveBg {
-            0% { transform: translate(-25%, -25%) scale(1); }
-            100% { transform: translate(0%, 0%) scale(1.2); }
+        body::before {
+            background: radial-gradient(circle at 35% 20%, rgba(210, 0, 0, 0.35), rgba(20, 0, 0, 0.95) 48%, rgba(0,0,0,1) 100%);
+            animation: fogDrift 18s ease-in-out infinite;
+            filter: blur(2.5px);
+            opacity: 0.9;
+        }
+
+        body::after {
+            background: linear-gradient(160deg, rgba(20, 0, 0, 0.35) 0%, rgba(0,0,0,0.75) 40%, rgba(0,0,0,0.95) 100%);
+            mix-blend-mode: multiply;
+            animation: crimsonPulse 14s infinite;
+            opacity: 0.7;
+            filter: blur(1.5px);
+        }
+
+        .blood-streaks {
+            pointer-events: none;
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background-image:
+                radial-gradient(circle at 12% 20%, rgba(255, 20, 20, 0.2), transparent 32%),
+                radial-gradient(circle at 78% 25%, rgba(255, 80, 80, 0.15), transparent 34%),
+                radial-gradient(circle at 50% 80%, rgba(150, 0, 0, 0.08), transparent 36%),
+                linear-gradient(to bottom, rgba(0,0,0,0.22), rgba(0,0,0,0.75));
+            background-size: 100% 100%;
+            animation: bloodStreak 12s ease-in-out infinite;
+        }
+
+        @keyframes fogDrift {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-2.5%, 1.2%) scale(1.03); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+
+        @keyframes crimsonPulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 0.9; }
+        }
+
+        @keyframes bloodStreak {
+            0% { background-position: 0 0; }
+            50% { background-position: 10% 8%; }
+            100% { background-position: 0 0; }
         }
 
         /* Animações Dinâmicas */
@@ -96,55 +137,101 @@
 
         .sheet {
             max-width: 1100px;
-            margin: 0 auto 40px;
+            margin: 0 auto 30px;
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            gap: 18px;
             padding: 0 20px;
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.16);
+            box-shadow: 0 12px 45px rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(4px);
+            animation: sheetPulse 8s ease-in-out infinite;
         }
 
         .section {
-            background: var(--panel);
-            padding: 22px;
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--border);
-            backdrop-filter: blur(8px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            background: linear-gradient(160deg, #0d111e 0%, #171c2f 100%);
+            padding: 20px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 85, 85, 0.25);
+            backdrop-filter: blur(4px);
+            box-shadow: 0 8px 26px rgba(0,0,0,0.45);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(130deg, rgba(255, 0, 0, 0.05), transparent 60%);
+            pointer-events: none;
+            opacity: 0.35;
         }
 
         .full { grid-column: 1 / -1; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
 
         h2 {
             margin: 0 0 15px;
             font-size: 13px;
-            color: var(--accent-blue);
-            border-bottom: 1px solid var(--border);
+            color: #ff7f7f;
+            border-bottom: 1px dashed rgba(255, 80, 80, 0.5);
             padding-bottom: 8px;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            text-shadow: 0 0 20px rgba(255, 60, 60, 0.35);
         }
 
         label {
             display: block;
             font-size: 11px;
-            color: var(--muted);
+            color: #d5d8e2;
             margin-bottom: 6px;
             text-transform: uppercase;
-            font-weight: 600;
+            letter-spacing: 0.6px;
+            font-weight: 700;
         }
 
         input, textarea {
             width: 100%;
-            padding: 12px;
-            margin-bottom: 12px;
-            background: var(--panel-soft);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            color: #fff;
-            font-size: 15px;
+            padding: 11px;
+            margin-bottom: 10px;
+            background: rgba(5, 10, 20, 0.95);
+            border: 1px solid rgba(135, 164, 255, 0.18);
+            border-radius: 10px;
+            color: #f8f9ff;
+            font-size: 14px;
             transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, transform 0.15s ease;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+        }
+
+        input:hover, textarea:hover {
+            transform: translateY(-1px);
+            border-color: rgba(255, 113, 113, 0.6);
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #ff5464;
+            box-shadow: 0 0 7px rgba(255, 84, 100, 0.45);
+            background: rgba(12, 20, 35, 0.95);
+            transform: scale(1.01);
+        }
+
+        input[readonly] {
+            background: rgba(0, 0, 0, 0.25);
+            border-style: dashed;
+            color: #bcc4d9;
+            cursor: not-allowed;
+        }
+
+        @keyframes sheetPulse {
+            0%, 100% { box-shadow: 0 12px 45px rgba(0, 0, 0, 0.65); }
+            50% { box-shadow: 0 14px 60px rgba(150, 0, 0, 0.5); }
         }
 
         input:hover, textarea:hover {
@@ -540,6 +627,7 @@
 </head>
 
 <body>
+    <div class="blood-streaks" aria-hidden="true"></div>
 
     <h1>Operação Renascer</h1>
 
