@@ -97,6 +97,24 @@
             body::before { background: radial-gradient(circle at 40% 20%, rgba(130, 0, 0, 0.2), rgba(0,0,0,0.9) 70%); }
             body::after { background: linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.95)); }
             .blood-streaks { background: none; }
+
+            .sheet {
+                animation: none !important;
+                box-shadow: none !important;
+                border: 1px solid rgba(180, 0, 0, 0.2);
+                backdrop-filter: none !important;
+                background: rgba(15, 18, 30, 0.95);
+            }
+
+            .section {
+                border: 1px solid rgba(255, 80, 80, 0.15);
+                box-shadow: none !important;
+                backdrop-filter: none !important;
+            }
+
+            input, textarea, button, .status-controls button, .btn-remover, .section {
+                transition: none !important;
+            }
         }
 
         @keyframes fogDrift {
