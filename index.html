@@ -23,7 +23,7 @@
             --radius-md: 10px;
         }
 
-        * { box-sizing: border-box; transition: background 0.3s, border-color 0.3s; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
             margin: 0;
@@ -32,6 +32,17 @@
             color: var(--text);
             overflow-x: hidden;
             min-height: 100vh;
+            transition: background-color 0.35s ease;
+            user-select: none;
+        }
+
+        body, .sheet, .section, h1, h2, label, .header-actions, .status-controls, .toast, .grid-1, .grid-2, .grid-3 { user-select: none; }
+
+        input, textarea { user-select: text; }
+        button { user-select: none; }
+
+        input, textarea, button, .status-controls button, .btn-remover, .section {
+            transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
         }
 
         /* Fundo Animado Paranormal */
@@ -133,12 +144,19 @@
             border-radius: var(--radius-md);
             color: #fff;
             font-size: 15px;
+            transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, transform 0.15s ease;
+        }
+
+        input:hover, textarea:hover {
+            transform: translateY(-1px);
         }
 
         input:focus, textarea:focus {
             outline: none;
             border-color: var(--accent-blue);
             box-shadow: 0 0 10px rgba(62, 158, 206, 0.3);
+            background: #262f45;
+            transform: scale(1.01);
         }
 
         input[readonly] {
@@ -158,12 +176,18 @@
             font-weight: bold;
             text-transform: uppercase;
             font-size: 11px;
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
         }
 
         button:hover {
             border-color: var(--accent-blue);
             background: #252d44;
-            transform: translateY(-2px);
+            transform: translateY(-3px) scale(1.01);
+            box-shadow: 0 7px 18px rgba(0,0,0,0.25);
+        }
+
+        button:active {
+            transform: translateY(-1px) scale(0.98);
         }
 
         /* Status de Vida/Sanidade */
@@ -191,6 +215,12 @@
             padding: 18px;
             position: relative;
             animation: cardPop 0.3s ease-out;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .ritual-card:hover, .item-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
         }
 
         .item-card.card-arma { border-left: 3px solid var(--accent-blue); }
@@ -238,6 +268,88 @@
             pointer-events: none;
             max-width: 350px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+        }
+        .dice-panel {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 10px;
+            align-items: end;
+        }
+        .dice-control {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .dice-control { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 10px; box-shadow: 0 8px 18px rgba(0,0,0,0.25); transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .dice-control:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.35); }
+        .dice-control label { color: var(--text); font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 5px; display: inline-block; }
+        .dice-control select,
+        .dice-control input { width: 100%; border-radius: 10px; border: 1px solid var(--border); background: #1d243c; color: #fff; padding: 10px; min-height: 36px; transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease; }
+        .dice-control select:focus,
+        .dice-control input:focus { border-color: var(--accent-blue); background: #263254; box-shadow: 0 0 10px rgba(62,158,206,0.3); outline: none; }
+        .dice-actions { display: flex; align-items: flex-end; justify-content: flex-start; gap: 10px; margin-top: 10px; }
+        .dice-actions button { border-radius: 10px; border: 1px solid var(--border); background: var(--panel-soft); color: #fff; padding: 9px 14px; font-weight: 700; letter-spacing: 0.6px; transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease; }
+        .dice-actions button:hover { background: #2d3657; border-color: var(--accent-blue); transform: translateY(-2px); }
+
+        .dice-result {
+            margin-top: 10px;
+            padding: 12px;
+            background: #1c2443;
+            border: 1px solid #3d4b6b;
+            border-radius: 12px;
+            color: #e5edff;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            min-height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            perspective: 400px;
+        }
+        .cube-3d {
+            width: 64px;
+            height: 64px;
+            position: relative;
+            transform-style: preserve-3d;
+            transform: rotateX(-20deg) rotateY(-20deg);
+            transition: transform 0.8s ease;
+            margin-right: 10px;
+        }
+        .cube-face {
+            position: absolute;
+            width: 64px;
+            height: 64px;
+            border-radius: 8px;
+            display: grid;
+            place-items: center;
+            font-size: 22px;
+            font-weight: 900;
+            color: #fff;
+            background: linear-gradient(145deg, #4b5aa8, #2b3766);
+            border: 1px solid #8aa2ff;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+        }
+        .cube-face.front  { transform: rotateY(0deg) translateZ(32px); }
+        .cube-face.back   { transform: rotateY(180deg) translateZ(32px); }
+        .cube-face.right  { transform: rotateY(90deg) translateZ(32px); }
+        .cube-face.left   { transform: rotateY(-90deg) translateZ(32px); }
+        .cube-face.top    { transform: rotateX(90deg) translateZ(32px); }
+        .cube-face.bottom { transform: rotateX(-90deg) translateZ(32px); }
+        .cube-3d.rolling { animation: cubeSpin 1.2s ease both; }
+        @keyframes cubeSpin {
+            0% { transform: rotateX(-20deg) rotateY(-20deg); }
+            20% { transform: rotateX(120deg) rotateY(120deg); }
+            40% { transform: rotateX(240deg) rotateY(240deg); }
+            60% { transform: rotateX(360deg) rotateY(360deg); }
+            80% { transform: rotateX(480deg) rotateY(480deg); }
+            100% { transform: rotateX(540deg) rotateY(540deg); }
+        }
+
+        @media (max-width: 900px) {
+            .dice-panel { grid-template-columns: 1fr; }
+            .dice-actions { justify-content: flex-start; margin-top: 0; }
         }
         .toast.show { opacity: 1; transform: translateY(0); }
         .toast.confirm { pointer-events: auto; }
@@ -337,11 +449,7 @@
     height: 100%;
     width: 0%;
     background: linear-gradient(90deg, var(--accent-blue), #6fbbe8);
-    transition: width 0.3s ease;
-}
-
-.status-bar.contam .fill {
-    background: linear-gradient(90deg, #4f5d23, #9dbb3d);
+    transition: width 0.35s ease, background 0.3s ease;
 }
 
 .status-controls {
@@ -483,6 +591,53 @@
                 <div><label>Medicina</label><input id="per_medicina" type="number" value="0"></div>
                 <div><label>Ocultismo</label><input id="per_ocultismo" type="number" value="0"></div>
                 <div><label>Reflexo</label><input id="per_reflexo" type="number" value="0"></div>
+            </div>
+        </div>
+
+        <div class="section full">
+            <h2>Rolagem de Dados</h2>
+            <div class="dice-panel">
+                <div class="dice-control">
+                    <label>Atributo Base</label>
+                    <select id="rollAttribute">
+                        <option value="forca">Força</option>
+                        <option value="agilidade">Agilidade</option>
+                        <option value="intelecto">Intelecto</option>
+                        <option value="percepcao">Percepção</option>
+                        <option value="vontade">Vontade</option>
+                    </select>
+                </div>
+                <div class="dice-control">
+                    <label>Perícia</label>
+                    <select id="rollSkill">
+                        <option value="per_atletismo">Atletismo</option>
+                        <option value="per_furtividade">Furtividade</option>
+                        <option value="per_manipulacao">Manipulação</option>
+                        <option value="per_intimidacao">Intimidação</option>
+                        <option value="per_luta">Luta</option>
+                        <option value="per_mira">Mira</option>
+                        <option value="per_pilotagem">Pilotagem</option>
+                        <option value="per_investigacao">Investigação</option>
+                        <option value="per_tecnologia">Tecnologia</option>
+                        <option value="per_medicina">Medicina</option>
+                        <option value="per_ocultismo">Ocultismo</option>
+                        <option value="per_reflexo">Reflexo</option>
+                    </select>
+                </div>
+                <div class="dice-actions">
+                    <button onclick="rolarTeste()">🎲 Rolar Teste</button>
+                </div>
+            </div>
+            <div class="dice-result" id="diceResult" aria-live="polite">
+                <div class="cube-3d" id="diceCube">
+                    <div class="cube-face front" id="diceFace">1</div>
+                    <div class="cube-face back">2</div>
+                    <div class="cube-face right">3</div>
+                    <div class="cube-face left">4</div>
+                    <div class="cube-face top">5</div>
+                    <div class="cube-face bottom">6</div>
+                </div>
+                <span id="diceText">Nenhuma rolagem ainda.</span>
             </div>
         </div>
 
@@ -787,6 +942,68 @@ function removerCard(btn) {
                 else if (pct < 70) input.classList.add('warn');
                 else input.classList.add('ok');
             });
+        }
+
+        function rolarDados() {
+            const dadoTipo = +el('dadoTipo').value;
+            const mod = +el('dadoMod').value || 0;
+            const resultado = Math.floor(Math.random() * dadoTipo) + 1;
+            const total = resultado + mod;
+            const resultEl = el('diceResult');
+            const textEl = el('diceText');
+            const cubeEl = el('diceCube');
+            const faceEl = el('diceFace');
+
+            resultEl.classList.remove('roll');
+            void resultEl.offsetWidth;
+            resultEl.classList.add('roll');
+
+            cubeEl.classList.remove('rolling');
+            void cubeEl.offsetWidth;
+            cubeEl.classList.add('rolling');
+
+            faceEl.textContent = '?';
+            textEl.textContent = 'Rolando...';
+
+            setTimeout(() => {
+                cubeEl.classList.remove('rolling');
+                faceEl.textContent = resultado;
+                textEl.textContent = `Resultado: ${resultado} + ${mod} = ${total} (d${dadoTipo})`;
+                resultEl.classList.remove('roll');
+            }, 1200);
+        }
+
+        function rolarTeste() {
+            const dado = Math.floor(Math.random()*20)+1;
+            const atrId = el('rollAttribute').value;
+            const perId = el('rollSkill').value;
+            const atr = +el(atrId).value || 0;
+            const per = +el(perId).value || 0;
+            const d4s = atr;
+            const d4Total = Array.from({length:d4s}, ()=>Math.floor(Math.random()*4)+1).reduce((a,b)=>a+b,0);
+            const total = dado + d4Total + per;
+
+            const resultEl = el('diceResult');
+            const textEl = el('diceText');
+            const cubeEl = el('diceCube');
+            const faceEl = el('diceFace');
+
+            resultEl.classList.remove('roll');
+            void resultEl.offsetWidth;
+            resultEl.classList.add('roll');
+            cubeEl.classList.remove('rolling');
+            void cubeEl.offsetWidth;
+            cubeEl.classList.add('rolling');
+
+            faceEl.textContent = '?';
+            textEl.textContent = 'Rolando...';
+
+            setTimeout(() => {
+                cubeEl.classList.remove('rolling');
+                faceEl.textContent = dado;
+                textEl.textContent = `d20:${dado} + ${d4s}d4:${d4Total} + per:${per} = ${total}`;
+                resultEl.classList.remove('roll');
+            }, 1400);
         }
 
         /* --- SALVAMENTO COMPLETO (JSON) --- */
