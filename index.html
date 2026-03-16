@@ -595,6 +595,23 @@
                 padding: 15px;
                 font-size: 13px;
             }
+
+            .notes-board {
+                grid-template-columns: 1fr !important;
+                gap: 8px;
+            }
+            .note-column {
+                min-height: 180px;
+                padding: 8px;
+            }
+            .note-title, .note-text {
+                font-size: 12px;
+                line-height: 1.3;
+            }
+
+            .note-column h3 {
+                font-size: 11px;
+            }
         }
 
         /* Ajuste específico para o monitoramento vital em telas muito pequenas */
@@ -1318,8 +1335,9 @@ function removerCard(btn) {
             if (!raw) return;
             el('rituaisContainer').innerHTML = '';
             el('inventarioContainer').innerHTML = '';
-            if (raw.notas) {
-                criarColunasNotas();
+            el('notaBoard').innerHTML = ''; // garante board limpo
+            criarColunasNotas();
+            if (Array.isArray(raw.notas)) {
                 raw.notas.forEach(n => adicionarNota(n));
             }
             Object.entries(raw).forEach(([id, val]) => { if (el(id) && id !== 'rituais' && id !== 'itens' && id !== 'notas') el(id).value = val; });
