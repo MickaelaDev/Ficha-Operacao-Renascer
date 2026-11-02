@@ -53,22 +53,27 @@ mostrado normalmente.
 
 ## Publicando no GitHub Pages
 
-O deploy é automático pelo workflow [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml):
+O deploy padrão é feito para a branch `gh-pages`:
 
-1. Todo push na `main` roda `npm ci --ignore-scripts`, `npm run build` e publica `dist/`.
-2. O Pages está configurado com **Source: GitHub Actions**.
-3. Também dá para disparar manualmente em **Actions → Deploy no GitHub Pages → Run workflow**.
+```bash
+npm run deploy
+```
+
+O comando roda `npm run build` e envia o conteúdo de `dist/` para a branch
+`gh-pages`. No GitHub, o Pages está configurado com **Source: Deploy from a
+branch → gh-pages → / (root)**.
 
 O site fica em `https://mickaeladev.github.io/Ficha-Operacao-Renascer/`. O
 `vite.config.js` usa `base: './'`, então o build funciona nessa subpasta sem
 configuração extra.
 
-Para publicar manualmente (sem Actions), rode `npm run build` e envie o
-conteúdo de `dist/` (`index.html`, `assets/` e `dice/`) para a branch
-configurada no Pages.
+O projeto também inclui [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)
+como alternativa via GitHub Actions. Ele roda apenas manualmente (**Actions →
+Deploy no GitHub Pages → Run workflow**); para usá-lo, mude o Pages para
+**Source: GitHub Actions**.
 
-> O `.gitignore` ignora `dist/` e `node_modules/`. O build é gerado no CI; os
-> assets 3D ficam versionados em `public/dice/` e são copiados para `dist/dice/`.
+> O `.gitignore` ignora `dist/` e `node_modules/`. Os assets 3D ficam
+> versionados em `public/dice/` e são copiados para `dist/dice/`.
 
 ---
 
@@ -76,7 +81,7 @@ configurada no Pages.
 
 ```
 .
-├── .github/workflows/deploy.yml  # deploy automático no GitHub Pages
+├── .github/workflows/deploy.yml  # deploy opcional via GitHub Actions
 ├── index.html               # entrada do Vite
 ├── legacy/index.html        # ficha antiga (v1) preservada como referência
 ├── src/
