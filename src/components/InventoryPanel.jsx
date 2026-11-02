@@ -114,6 +114,7 @@ export default function InventoryPanel({ items, onAdd, onUpdate, onRemove, onMov
     <Panel
       title="Equipamentos e Itens"
       span={12}
+      className="panel--inventory"
       actions={
         <>
           <button type="button" className="btn btn--sm" onClick={() => onAdd('comum')}>

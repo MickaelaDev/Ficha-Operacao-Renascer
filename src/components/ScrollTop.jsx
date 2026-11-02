@@ -16,9 +16,15 @@ export default function ScrollTop() {
       className="to-top"
       data-visible={visible || undefined}
       aria-hidden={!visible}
+      aria-label="Voltar ao topo"
       tabIndex={visible ? 0 : -1}
       title="Voltar ao topo"
-      onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+      onClick={() =>
+        window.scrollTo({
+          top: 0,
+          behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+        })
+      }
     >
       ↑
     </button>

@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import Icon from './Icon.jsx';
 
 function formatTime(date) {
   if (!date) return null;
@@ -28,13 +29,16 @@ export default function Masthead({ savedAt, onSave, onLoad, onExport, onImport, 
 
           <div className="actions">
             <button type="button" className="btn" onClick={onSave} title="Ctrl + S">
-              💾 Salvar
+              <Icon name="save" className="btn__icon" />
+              Salvar
             </button>
             <button type="button" className="btn" onClick={onLoad}>
-              📂 Carregar
+              <Icon name="load" className="btn__icon" />
+              Carregar
             </button>
             <button type="button" className="btn" onClick={onExport}>
-              ⬇️ Exportar
+              <Icon name="export" className="btn__icon" />
+              Exportar
             </button>
             <input
               ref={fileRef}
@@ -48,10 +52,12 @@ export default function Masthead({ savedAt, onSave, onLoad, onExport, onImport, 
               }}
             />
             <button type="button" className="btn" onClick={() => fileRef.current?.click()}>
-              ⬆️ Importar
+              <Icon name="import" className="btn__icon" />
+              Importar
             </button>
             <button type="button" className="btn btn--danger" onClick={onClear}>
-              🗑️ Limpar
+              <Icon name="trash" className="btn__icon" />
+              Limpar
             </button>
           </div>
         </div>

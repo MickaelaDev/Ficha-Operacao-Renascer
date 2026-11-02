@@ -1,34 +1,58 @@
 :root {
   color-scheme: dark;
 
-  /* Fundo paranormal */
-  --bg: #050306;
-  --bg-deep: #010003;
-  --blood: #b30000;
-  --blood-bright: #ff2d2d;
-  --blood-deep: #4a0000;
+  /* Preto, grafite e fumaça */
+  --bg: #050405;
+  --bg-deep: #000;
+  --ash-950: #080607;
+  --ash-900: #0d0b0c;
+  --ash-850: #121011;
+  --ash-800: #171415;
+  --ash-700: #211c1e;
+  --ash-600: #2c2527;
+  --ash-500: #3a3133;
 
-  /* Interface clínica */
-  --panel: #0d1120;
-  --panel-2: #131a2b;
-  --panel-3: #182036;
-  --line: rgba(150, 170, 210, 0.13);
-  --line-strong: rgba(150, 170, 210, 0.26);
-  --accent: #58b7e0;
-  --accent-soft: rgba(88, 183, 224, 0.14);
+  /* Sangue */
+  --blood: #8f0f1b;
+  --blood-bright: #ff3347;
+  --blood-soft: #d4535b;
+  --blood-deep: #3a050b;
+  --blood-wine: #5e0a14;
+  --ember: #c9634d;
 
-  --text: #e8eaf0;
-  --muted: #8b93a7;
-  --danger: #ff4d4d;
-  --warn: #f5c542;
-  --orange: #ff8c00;
-  --violet: #a44bff;
+  /* Interface */
+  --panel: #0e0b0c;
+  --panel-2: #151112;
+  --panel-3: #1c1719;
+  --line: rgba(210, 170, 168, 0.11);
+  --line-strong: rgba(225, 175, 172, 0.22);
+  --accent: #d92a3a;
+  --accent-bright: #ff4050;
+  --accent-soft: rgba(217, 42, 58, 0.13);
+  --accent-glow: rgba(255, 45, 65, 0.45);
+
+  --text: #f1e9e7;
+  --text-soft: #d8cac8;
+  --muted: #9b8c8c;
+  --muted-deep: #8a7b7c;
+  --danger: #ff4050;
+  --warn: #d9b1a9;
+  --orange: #c9634d;
+  --violet: #7e2433;
 
   --radius-lg: 18px;
-  --radius-md: 12px;
-  --radius-sm: 8px;
+  --radius-md: 13px;
+  --radius-sm: 9px;
 
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --font: 'Segoe UI', 'Inter', system-ui, -apple-system, Roboto, sans-serif;
+  --font-display: 'Bahnschrift SemiCondensed', 'Bahnschrift', 'Segoe UI', system-ui, sans-serif;
   --mono: ui-monospace, 'Cascadia Mono', 'Segoe UI Mono', Menlo, Consolas, monospace;
+
+  --shadow-panel:
+    0 28px 70px -38px rgba(0, 0, 0, 0.95),
+    0 0 0 1px rgba(255, 70, 70, 0.02);
+  --shadow-card: 0 18px 38px -28px rgba(0, 0, 0, 0.95);
 }

@@ -3,6 +3,7 @@ import { ATTRIBUTES, ATTRIBUTE_MAX, SKILLS, clamp, toInt } from '../lib/rules.js
 import { uid } from '../lib/sheet.js';
 import DiceOverlay from './DiceOverlay.jsx';
 import { DiceChip } from './DiceChip.jsx';
+import Icon from './Icon.jsx';
 import Panel from './Panel.jsx';
 
 function formatClock(timestamp) {
@@ -58,7 +59,7 @@ export default function DicePanel({ sheet }) {
   }, []);
 
   return (
-    <Panel title="Rolagem de Dados" span={6}>
+    <Panel title="Rolagem de Dados" span={6} className="panel--dice">
       <div className="dice">
         <div className="dice__config">
           <label className="field">
@@ -149,7 +150,8 @@ export default function DicePanel({ sheet }) {
           onClick={openRoll}
           aria-haspopup="dialog"
         >
-          🎲 Rolar Teste
+          <Icon name="dice" size={16} className="btn__icon" />
+          Rolar Teste
         </button>
 
         <div className="rolls">

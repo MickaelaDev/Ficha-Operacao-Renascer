@@ -74,6 +74,7 @@ export default function NotesPanel({ notas, onAdd, onUpdate, onMove, onRemove })
     <Panel
       title="Anotações Mentais"
       span={12}
+      className="panel--notes"
       actions={
         <button type="button" className="btn btn--sm" onClick={() => onAdd('acontecimentos')}>
           + Nova Nota

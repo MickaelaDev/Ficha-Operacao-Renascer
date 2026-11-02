@@ -56,7 +56,7 @@ function Vital({ vital, current, max, onSet }) {
 
 export default function VitalsPanel({ derived, onSetVital }) {
   return (
-    <Panel title="Monitoramento Vital" span={6}>
+    <Panel title="Monitoramento Vital" span={6} className="panel--vitals">
       <div className="vitals">
         {VITALS.map((vital) => (
           <Vital

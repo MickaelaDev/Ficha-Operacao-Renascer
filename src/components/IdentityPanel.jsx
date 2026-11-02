@@ -3,7 +3,7 @@ import Panel from './Panel.jsx';
 
 export default function IdentityPanel({ sheet, onChange }) {
   return (
-    <Panel title="Identidade do Agente" span={12}>
+    <Panel title="Identidade do Agente" span={12} className="panel--identity">
       <div className="grid grid--identity">
         <Field label="Nome">
           <input

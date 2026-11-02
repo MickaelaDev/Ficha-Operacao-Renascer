@@ -91,6 +91,7 @@ export default function RitualsPanel({ rituais, onAdd, onUpdate, onRemove, onMov
     <Panel
       title="Rituais & Poderes"
       span={12}
+      className="panel--rituals"
       actions={
         <button type="button" className="btn btn--sm" onClick={onAdd}>
           + Novo Ritual
