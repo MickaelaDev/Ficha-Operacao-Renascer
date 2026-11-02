@@ -5,8 +5,6 @@ export default function CardOrderControls({
   canDown,
   disabled = false,
   onMove,
-  onDragStart,
-  onDragEnd,
 }) {
   const move = (direction) => {
     if (disabled) return;
@@ -20,16 +18,14 @@ export default function CardOrderControls({
         className="card__grip"
         draggable={!disabled}
         aria-disabled={disabled || undefined}
-        onDragStart={(event) => onDragStart(event, id)}
-        onDragEnd={onDragEnd}
         onKeyDown={(event) => {
           if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return;
           event.preventDefault();
           if (event.key === 'ArrowUp' && canUp) move('up');
           if (event.key === 'ArrowDown' && canDown) move('down');
         }}
-        title="Arraste para reordenar (ou use ↑ ↓)"
-        aria-label={`Arrastar ${label} para reordenar. Use as setas para cima e para baixo.`}
+        title="Arraste o card para reordenar (ou use ↑ ↓)"
+        aria-label={`Arrastar ${label} para reordenar. Você também pode usar as setas para cima e para baixo.`}
         aria-keyshortcuts="ArrowUp ArrowDown"
       >
         <span aria-hidden="true">⠿</span>

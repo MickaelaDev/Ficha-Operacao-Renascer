@@ -28,8 +28,11 @@ const RitualCard = memo(function RitualCard({
   return (
     <article
       className={`card${leaving ? ' is-leaving' : ''}${dragging ? ' is-dragging' : ''}`}
+      draggable={!leaving}
       data-kind="ritual"
       data-over={over || undefined}
+      onDragStart={(event) => onDragStart(event, ritual.id)}
+      onDragEnd={onDragEnd}
       onDragOver={(event) => onDragOver(event, ritual.id)}
       onDrop={(event) => onDrop(event, ritual.id)}
     >
@@ -67,8 +70,6 @@ const RitualCard = memo(function RitualCard({
         canDown={canDown}
         disabled={leaving}
         onMove={onMove}
-        onDragStart={onDragStart}
-        onDragEnd={onDragEnd}
       />
     </article>
   );

@@ -32,8 +32,11 @@ const ItemCard = memo(function ItemCard({
       className={`card${isWeapon ? ' card--arma' : ''}${leaving ? ' is-leaving' : ''}${
         dragging ? ' is-dragging' : ''
       }`}
+      draggable={!leaving}
       data-kind={item.tipo}
       data-over={over || undefined}
+      onDragStart={(event) => onDragStart(event, item.id)}
+      onDragEnd={onDragEnd}
       onDragOver={(event) => onDragOver(event, item.id)}
       onDrop={(event) => onDrop(event, item.id)}
     >
@@ -90,8 +93,6 @@ const ItemCard = memo(function ItemCard({
         canDown={canDown}
         disabled={leaving}
         onMove={onMove}
-        onDragStart={onDragStart}
-        onDragEnd={onDragEnd}
       />
     </article>
   );
