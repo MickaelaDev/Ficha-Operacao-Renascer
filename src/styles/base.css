@@ -1,0 +1,207 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--text);
+  background:
+    radial-gradient(120% 70% at 50% -10%, rgba(110, 0, 0, 0.42), transparent 58%),
+    radial-gradient(90% 60% at 100% 100%, rgba(55, 0, 14, 0.55), transparent 62%),
+    var(--bg);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+}
+
+h1,
+h2,
+h3,
+p,
+ul {
+  margin: 0;
+}
+
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+::selection {
+  background: rgba(255, 45, 45, 0.35);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(179, 0, 0, 0.55) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.32);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(#5a0000, #2a0000);
+  border-radius: 99px;
+  border: 2px solid #050306;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8a0000;
+}
+
+/* ------------------------------------------------------------------ */
+/* Atmosfera: névoa, scanlines, ruído e vinheta                       */
+/* ------------------------------------------------------------------ */
+
+.atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.atmosphere__fog {
+  position: absolute;
+  inset: -18%;
+  will-change: transform, opacity;
+}
+
+.atmosphere__fog--a {
+  background:
+    radial-gradient(45% 38% at 24% 16%, rgba(190, 0, 0, 0.32), transparent 70%),
+    radial-gradient(38% 42% at 78% 28%, rgba(120, 0, 0, 0.22), transparent 72%),
+    radial-gradient(55% 45% at 52% 92%, rgba(80, 0, 0, 0.3), transparent 72%);
+  animation: fogDriftA 26s ease-in-out infinite;
+}
+
+.atmosphere__fog--b {
+  background:
+    radial-gradient(40% 40% at 70% 70%, rgba(140, 0, 0, 0.16), transparent 70%),
+    radial-gradient(35% 35% at 12% 78%, rgba(90, 0, 20, 0.2), transparent 72%);
+  mix-blend-mode: screen;
+  animation: fogDriftB 34s ease-in-out infinite;
+}
+
+.atmosphere__scan {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.035) 0 1px,
+    transparent 1px 3px
+  );
+  opacity: 0.4;
+  animation: scanDrift 14s linear infinite;
+}
+
+.atmosphere__noise {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+  opacity: 0.045;
+  mix-blend-mode: overlay;
+}
+
+.atmosphere__vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 90% at 50% 40%, transparent 42%, rgba(0, 0, 0, 0.72) 100%);
+}
+
+@keyframes fogDriftA {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translate3d(-2.5%, 1.5%, 0) scale(1.04);
+    opacity: 1;
+  }
+}
+
+@keyframes fogDriftB {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1.02);
+    opacity: 0.75;
+  }
+  50% {
+    transform: translate3d(2%, -2%, 0) scale(1);
+    opacity: 0.95;
+  }
+}
+
+@keyframes scanDrift {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 0 6px;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Movimento reduzido / telas modestas                                */
+/* ------------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  .atmosphere__fog,
+  .atmosphere__scan,
+  .title__text::before,
+  .title__text::after {
+    animation: none !important;
+  }
+}
+
+@media (max-width: 720px) {
+  .atmosphere__fog--a {
+    animation-duration: 40s;
+  }
+  .atmosphere__fog--b {
+    display: none;
+  }
+  .atmosphere__noise {
+    opacity: 0.03;
+  }
+}
