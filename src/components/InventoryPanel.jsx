@@ -1,19 +1,41 @@
 import { memo } from 'react';
 import { useLeaving } from '../hooks/useLeaving.js';
+import { useReorder } from '../hooks/useReorder.js';
+import CardOrderControls from './CardOrderControls.jsx';
 import Field from './Field.jsx';
 import Panel from './Panel.jsx';
 
-const ItemCard = memo(function ItemCard({ item, leaving, onUpdate, onRemove }) {
+const ItemCard = memo(function ItemCard({
+  item,
+  leaving,
+  dragging,
+  over,
+  canUp,
+  canDown,
+  onUpdate,
+  onRemove,
+  onMove,
+  onDragStart,
+  onDragOver,
+  onDrop,
+  onDragEnd,
+}) {
   const bind = (key) => ({
     value: item[key],
     onChange: (event) => onUpdate(item.id, key, event.target.value),
   });
   const isWeapon = item.tipo === 'arma';
+  const label = isWeapon ? 'arma' : 'item';
 
   return (
     <article
-      className={`card${isWeapon ? ' card--arma' : ''}${leaving ? ' is-leaving' : ''}`}
+      className={`card${isWeapon ? ' card--arma' : ''}${leaving ? ' is-leaving' : ''}${
+        dragging ? ' is-dragging' : ''
+      }`}
       data-kind={item.tipo}
+      data-over={over || undefined}
+      onDragOver={(event) => onDragOver(event, item.id)}
+      onDrop={(event) => onDrop(event, item.id)}
     >
       <button
         type="button"
@@ -60,12 +82,32 @@ const ItemCard = memo(function ItemCard({ item, leaving, onUpdate, onRemove }) {
           </Field>
         </>
       )}
+
+      <CardOrderControls
+        id={item.id}
+        label={label}
+        canUp={canUp}
+        canDown={canDown}
+        disabled={leaving}
+        onMove={onMove}
+        onDragStart={onDragStart}
+        onDragEnd={onDragEnd}
+      />
     </article>
   );
 });
 
-export default function InventoryPanel({ items, onAdd, onUpdate, onRemove }) {
+export default function InventoryPanel({ items, onAdd, onUpdate, onRemove, onMove }) {
   const { leaving, leave } = useLeaving();
+  const {
+    draggingId,
+    overId,
+    onDragStart,
+    onDragOver,
+    onDrop,
+    onDragEnd,
+    onDragLeaveContainer,
+  } = useReorder(onMove);
 
   return (
     <Panel
@@ -82,14 +124,23 @@ export default function InventoryPanel({ items, onAdd, onUpdate, onRemove }) {
         </>
       }
     >
-      <div className="cards">
-        {items.map((item) => (
+      <div className="cards" onDragLeave={onDragLeaveContainer}>
+        {items.map((item, index) => (
           <ItemCard
             key={item.id}
             item={item}
             leaving={leaving.has(item.id)}
+            dragging={draggingId === item.id}
+            over={overId === item.id}
+            canUp={index > 0}
+            canDown={index < items.length - 1}
             onUpdate={onUpdate}
             onRemove={(id) => leave(id, () => onRemove(id))}
+            onMove={onMove}
+            onDragStart={onDragStart}
+            onDragOver={onDragOver}
+            onDrop={onDrop}
+            onDragEnd={onDragEnd}
           />
         ))}
       </div>

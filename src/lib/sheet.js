@@ -105,6 +105,18 @@ export function clampVitals(sheet) {
   };
 }
 
+/** Move um item para a posição `to` da lista original (sem perder o objeto). */
+function moveToIndex(list, from, to) {
+  if (from < 0 || from >= list.length) return list;
+  const target = clamp(to, 0, list.length - 1);
+  if (from === target) return list;
+
+  const next = list.slice();
+  const [moved] = next.splice(from, 1);
+  next.splice(target, 0, moved);
+  return next;
+}
+
 /** Aceita o JSON antigo (v1) e o novo sem perder nada. */
 export function normalizeSheet(raw) {
   const base = createEmptySheet();
@@ -224,6 +236,24 @@ export function sheetReducer(state, action) {
     case 'ritual/remove':
       return { ...state, rituais: state.rituais.filter((r) => r.id !== action.id) };
 
+    case 'ritual/move': {
+      const from = state.rituais.findIndex((r) => r.id === action.id);
+      if (from < 0) return state;
+
+      let to;
+      if (action.targetId) {
+        to = state.rituais.findIndex((r) => r.id === action.targetId);
+        if (to < 0) return state;
+      } else if (action.direction === 'up' || action.direction === 'down') {
+        to = from + (action.direction === 'down' ? 1 : -1);
+      } else {
+        return state;
+      }
+
+      const next = moveToIndex(state.rituais, from, to);
+      return next === state.rituais ? state : { ...state, rituais: next };
+    }
+
     case 'item/add':
       return { ...state, itens: [...state.itens, createItem(action.tipo)] };
 
@@ -237,6 +267,24 @@ export function sheetReducer(state, action) {
 
     case 'item/remove':
       return { ...state, itens: state.itens.filter((i) => i.id !== action.id) };
+
+    case 'item/move': {
+      const from = state.itens.findIndex((i) => i.id === action.id);
+      if (from < 0) return state;
+
+      let to;
+      if (action.targetId) {
+        to = state.itens.findIndex((i) => i.id === action.targetId);
+        if (to < 0) return state;
+      } else if (action.direction === 'up' || action.direction === 'down') {
+        to = from + (action.direction === 'down' ? 1 : -1);
+      } else {
+        return state;
+      }
+
+      const next = moveToIndex(state.itens, from, to);
+      return next === state.itens ? state : { ...state, itens: next };
+    }
 
     case 'note/add':
       return { ...state, notas: [...state.notas, createNote({ status: action.status })] };

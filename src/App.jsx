@@ -214,6 +214,10 @@ export default function App() {
     [],
   );
   const removeRitual = useCallback((id) => dispatch({ type: 'ritual/remove', id }), []);
+  const moveRitual = useCallback(
+    (id, options) => dispatch({ type: 'ritual/move', id, ...options }),
+    [],
+  );
 
   const addItem = useCallback((tipo) => dispatch({ type: 'item/add', tipo }), []);
   const updateItem = useCallback(
@@ -221,6 +225,10 @@ export default function App() {
     [],
   );
   const removeItem = useCallback((id) => dispatch({ type: 'item/remove', id }), []);
+  const moveItem = useCallback(
+    (id, options) => dispatch({ type: 'item/move', id, ...options }),
+    [],
+  );
 
   const addNote = useCallback((status) => dispatch({ type: 'note/add', status }), []);
   const updateNote = useCallback(
@@ -299,12 +307,14 @@ export default function App() {
             onAdd={addItem}
             onUpdate={updateItem}
             onRemove={removeItem}
+            onMove={moveItem}
           />
           <RitualsPanel
             rituais={sheet.rituais}
             onAdd={addRitual}
             onUpdate={updateRitual}
             onRemove={removeRitual}
+            onMove={moveRitual}
           />
           <NotesPanel
             notas={sheet.notas}

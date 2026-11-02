@@ -1,16 +1,38 @@
 import { memo } from 'react';
 import { useLeaving } from '../hooks/useLeaving.js';
+import { useReorder } from '../hooks/useReorder.js';
+import CardOrderControls from './CardOrderControls.jsx';
 import Field from './Field.jsx';
 import Panel from './Panel.jsx';
 
-const RitualCard = memo(function RitualCard({ ritual, leaving, onUpdate, onRemove }) {
+const RitualCard = memo(function RitualCard({
+  ritual,
+  leaving,
+  dragging,
+  over,
+  canUp,
+  canDown,
+  onUpdate,
+  onRemove,
+  onMove,
+  onDragStart,
+  onDragOver,
+  onDrop,
+  onDragEnd,
+}) {
   const bind = (key) => ({
     value: ritual[key],
     onChange: (event) => onUpdate(ritual.id, key, event.target.value),
   });
 
   return (
-    <article className={`card${leaving ? ' is-leaving' : ''}`} data-kind="ritual">
+    <article
+      className={`card${leaving ? ' is-leaving' : ''}${dragging ? ' is-dragging' : ''}`}
+      data-kind="ritual"
+      data-over={over || undefined}
+      onDragOver={(event) => onDragOver(event, ritual.id)}
+      onDrop={(event) => onDrop(event, ritual.id)}
+    >
       <button
         type="button"
         className="card__close"
@@ -37,12 +59,32 @@ const RitualCard = memo(function RitualCard({ ritual, leaving, onUpdate, onRemov
       <Field label="Riscos">
         <textarea className="input" rows={2} {...bind('riscos')} />
       </Field>
+
+      <CardOrderControls
+        id={ritual.id}
+        label="ritual"
+        canUp={canUp}
+        canDown={canDown}
+        disabled={leaving}
+        onMove={onMove}
+        onDragStart={onDragStart}
+        onDragEnd={onDragEnd}
+      />
     </article>
   );
 });
 
-export default function RitualsPanel({ rituais, onAdd, onUpdate, onRemove }) {
+export default function RitualsPanel({ rituais, onAdd, onUpdate, onRemove, onMove }) {
   const { leaving, leave } = useLeaving();
+  const {
+    draggingId,
+    overId,
+    onDragStart,
+    onDragOver,
+    onDrop,
+    onDragEnd,
+    onDragLeaveContainer,
+  } = useReorder(onMove);
 
   return (
     <Panel
@@ -54,14 +96,23 @@ export default function RitualsPanel({ rituais, onAdd, onUpdate, onRemove }) {
         </button>
       }
     >
-      <div className="cards">
-        {rituais.map((ritual) => (
+      <div className="cards" onDragLeave={onDragLeaveContainer}>
+        {rituais.map((ritual, index) => (
           <RitualCard
             key={ritual.id}
             ritual={ritual}
             leaving={leaving.has(ritual.id)}
+            dragging={draggingId === ritual.id}
+            over={overId === ritual.id}
+            canUp={index > 0}
+            canDown={index < rituais.length - 1}
             onUpdate={onUpdate}
             onRemove={(id) => leave(id, () => onRemove(id))}
+            onMove={onMove}
+            onDragStart={onDragStart}
+            onDragOver={onDragOver}
+            onDrop={onDrop}
+            onDragEnd={onDragEnd}
           />
         ))}
       </div>

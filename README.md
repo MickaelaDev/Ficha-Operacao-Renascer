@@ -152,6 +152,8 @@ Deploy no GitHub Pages → Run workflow**); para usá-lo, mude o Pages para
 - Barras vitais: `Shift + clique` em `−`/`+` altera 5 pontos.
 - Notas: arraste entre colunas no desktop ou use o seletor dentro do card no
   celular.
+- Itens e rituais: arraste pela alça `⠿` no rodapé do card, ou use `↑`/`↓`,
+  para mudar a ordem. A ordem é salva e exportada junto com a ficha.
 - Todos os cards mantêm a animação de dissipação ao serem removidos.
 
 ## Compatibilidade
